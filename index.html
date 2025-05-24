@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Analisis Pengeluaran Mahasiswa</title>
+  <script>
+    async function fetchTransaksi() {
+      const res = await fetch("/api/transaksi");
+      const data = await res.json();
+      document.getElementById("transaksi").innerHTML = data.map(t =>
+        `<li>${t.tanggal} | ${t.kategori} | Rp${t.jumlah}</li>`
+      ).join("");
+    }
+
+    async function tambahTransaksi() {
+      const jumlah = parseFloat(document.getElementById("jumlah").value);
+      const kategori = document.getElementById("kategori").value;
+      const tanggal = document.getElementById("tanggal").value;
+
+      await fetch("/api/transaksi", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({jumlah, kategori, tanggal})
+      });
+
+      fetchTransaksi();
+    }
+
+    window.onload = fetchTransaksi;
+  </script>
+</head>
+<body>
+  <h1>Pengeluaran Mahasiswa</h1>
+  <h2>Tambah Transaksi</h2>
+  <input id="jumlah" placeholder="Jumlah" type="number"><br>
+  <input id="kategori" placeholder="Kategori"><br>
+  <input id="tanggal" placeholder="Tanggal (YYYY-MM-DD)" type="date"><br>
+  <button onclick="tambahTransaksi()">Tambah</button>
+
+  <h2>Daftar Transaksi</h2>
+  <ul id="transaksi"></ul>
+</body>
+</html>
